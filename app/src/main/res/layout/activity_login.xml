@@ -44,6 +44,7 @@
             app:passwordToggleTint="@color/colorAccent">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/EditTextSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Digite sua senha"
@@ -67,6 +68,13 @@
             android:onClick="redirecionaCadastro"
             android:text="Não tem uma conta? Cadastre-se."
             android:textSize="@dimen/H2" />
+
+            <View
+                android:layout_marginTop="16dp"
+                android:id="@+id/snackView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
 
 
     </LinearLayout>

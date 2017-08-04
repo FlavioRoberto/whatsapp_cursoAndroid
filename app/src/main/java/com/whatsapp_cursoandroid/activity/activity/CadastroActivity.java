@@ -14,6 +14,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Model.Usuario;
@@ -74,9 +77,25 @@ public class CadastroActivity extends AppCompatActivity {
                         usuario.create();
                         user.sendEmailVerification();
                         Toast.makeText(CadastroActivity.this,"Cadastrado com sucesso",Toast.LENGTH_SHORT).show();
+                        autenticacao.signOut();
                         finish();
                     }else {
-                        Toast.makeText(CadastroActivity.this,"Não foi possível cadastrar\n"+task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                        String erro;
+                        try {
+                            throw task.getException();
+                        }catch (FirebaseAuthInvalidUserException e){
+                           erro ="E-mail inválido";
+
+                        }catch (FirebaseAuthWeakPasswordException e){
+                           erro = "Senha inválida, mínimo 6 caracteres";
+
+                        }catch (FirebaseAuthUserCollisionException e){
+                           erro ="E-mail já cadastrado";
+                        }catch (Exception e){
+                            erro = "Erro ao cadastrar\n"+e.getMessage();
+                        }
+
+                        Toast.makeText(CadastroActivity.this,erro,Toast.LENGTH_SHORT).show();
 
                     }
             }
