@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.whatsapp_cursoandroid.activity.activity.LoginActivity"
+    tools:context="com.whatsapp_cursoandroid.activity.activity.LoginTelefoneActivity"
     android:background="@color/colorPrimary">
 
     <LinearLayout

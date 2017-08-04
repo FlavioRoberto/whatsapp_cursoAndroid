@@ -7,13 +7,13 @@ import android.widget.EditText;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Application.Mascaras;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginTelefoneActivity extends AppCompatActivity {
     private EditText codigoPostal, DDD, telefone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_telefone_login);
 
         //instanciando componentes
         codigoPostal = (EditText)findViewById(R.id.EditTextCodigoPostal);

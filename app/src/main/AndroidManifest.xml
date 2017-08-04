@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.activity.LoginActivity">
+        <activity android:name=".activity.activity.login_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.activity.MainActivity" />
-        <activity android:name=".activity.activity.validadorActivity"></activity>
+        <activity android:name=".activity.activity.validadorActivity" />
+        <activity android:name=".activity.activity.LoginTelefoneActivity"></activity>
     </application>
 
 </manifest>
