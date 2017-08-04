@@ -24,6 +24,7 @@
             android:layout_weight="0.15"/>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputNome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Digite seu nome">
@@ -35,6 +36,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Digite seu email">
@@ -46,6 +48,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputConfirmaEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirme seu email">
@@ -58,6 +61,7 @@
 
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputCelular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Digite seu celular">
@@ -69,6 +73,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Digite sua senha"
@@ -85,6 +90,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputConfirmaSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirme sua senha"
