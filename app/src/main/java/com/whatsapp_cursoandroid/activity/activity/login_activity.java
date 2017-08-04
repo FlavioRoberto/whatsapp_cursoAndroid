@@ -1,5 +1,6 @@
 package com.whatsapp_cursoandroid.activity.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.whatsapp_cursoandroid.R;
+import com.whatsapp_cursoandroid.activity.Application.invocaProgressDialog;
 import com.whatsapp_cursoandroid.activity.Model.Usuario;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
@@ -32,6 +34,7 @@ public class login_activity extends AppCompatActivity {
     private Snackbar snackBar;
     private  boolean logou = false;
     private Snackbar snackbar;
+    private invocaProgressDialog progressDialog;
 
 
     @Override
@@ -44,6 +47,9 @@ public class login_activity extends AppCompatActivity {
         editTextSenha = (EditText)findViewById(R.id.EditTextSenha);
         btnLogar = (Button)findViewById(R.id.BtnLogin);
         snackView = (View)findViewById(R.id.snackView);
+        progressDialog = new invocaProgressDialog(login_activity.this);
+
+        verificaUsuarioLogado();
 
         btnLogar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,49 +63,83 @@ public class login_activity extends AppCompatActivity {
         });
     }
 
+    private boolean verificaCampoEmailSenha(){
+        if(editTextEmail.getText().toString().isEmpty() || editTextSenha.getText().toString().isEmpty()){
 
-    private void logarUsuario(){
-
-        logou = false;
-        auth = ConfiguracaoFirebase.getFirebaseAuth();
-        auth.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    logou = true;
-                }else {
-                    String erro;
-                    try {
-                        throw task.getException();
-                    }catch (FirebaseAuthInvalidUserException e){
-                        erro = "E-mail inválido";
-                    }catch (FirebaseAuthInvalidCredentialsException e){
-                        erro = "Senha inválida";
-                    }
-                    catch (Exception e) {
-                        erro = "Erro a logar\n"+e.getMessage();
-                        e.printStackTrace();
-                    }
-
-                    logou = false;
-                    Toast.makeText(login_activity.this,erro,Toast.LENGTH_LONG).show();
-                }
+            if(editTextEmail.getText().toString().isEmpty()){
+                editTextEmail.setError("Email vazio");
             }
-        });
 
-        final FirebaseUser user = auth.getCurrentUser();
+            if(editTextSenha.getText().toString().isEmpty()){
+                editTextSenha.setError("Senha vazia");
+            }
 
-        if(!user.isEmailVerified() && logou == true){
-            invocaSnackBar(user);
-        }else if(user.isEmailVerified() && logou == true) {
-            Intent intent = new Intent(login_activity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            return  false;
+        }else {
+            return  true;
         }
-
-
     }
 
+    private void verificaUsuarioLogado(){
+        auth = ConfiguracaoFirebase.getFirebaseAuth();
+        if(auth.getCurrentUser() != null){
+            progressDialog.show("aguarde","Logando...");
+            if(auth.getCurrentUser().isEmailVerified()){
+                redirecionaApp();
+                progressDialog.dimiss();
+            }
+            progressDialog.dimiss();
+        }
+    }
+
+    private void logarUsuario(){
+      if(verificaCampoEmailSenha()) {
+          progressDialog.show("Aguarde", "Realizando Login...");
+          auth = ConfiguracaoFirebase.getFirebaseAuth();
+          auth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+              @Override
+              public void onComplete(@NonNull Task<AuthResult> task) {
+                  if (task.isSuccessful()) {
+                      logou = true;
+                  } else {
+                      String erro;
+                      try {
+                          throw task.getException();
+                      } catch (FirebaseAuthInvalidUserException e) {
+                          erro = "E-mail inválido";
+                      } catch (FirebaseAuthInvalidCredentialsException e) {
+                          erro = "Senha inválida";
+                      } catch (Exception e) {
+                          erro = "Erro a logar\n" + e.getMessage();
+                          e.printStackTrace();
+                      }
+                      progressDialog.dimiss();
+                      logou = false;
+                      Toast.makeText(login_activity.this, erro, Toast.LENGTH_LONG).show();
+                  }
+              }
+          });
+
+          if (auth.getCurrentUser() != null) {
+              final FirebaseUser user = auth.getCurrentUser();
+
+              if (!user.isEmailVerified() && logou == true) {
+                  progressDialog.dimiss();
+                  invocaSnackBar(user);
+              } else if (user.isEmailVerified() && logou == true) {
+                  progressDialog.dimiss();
+                  redirecionaApp();
+
+              }
+          }
+      }
+    }
+
+    private void redirecionaApp(){
+        Intent intent = new Intent(login_activity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     private void invocaSnackBar(final FirebaseUser user){
          snackbar = Snackbar
