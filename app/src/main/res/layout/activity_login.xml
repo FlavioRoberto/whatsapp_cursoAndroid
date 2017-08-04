@@ -33,18 +33,22 @@
             android:inputType="textAutoComplete"/>
     </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Digite sua senha">
-            <EditText
-                android:id="@+id/EditTextSenha"
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:inputType="textVisiblePassword"
-                android:layout_marginBottom="16dp"/>
-        </android.support.design.widget.TextInputLayout>
+                app:passwordToggleContentDescription="Mostrar a senha"
+                app:passwordToggleDrawable="@drawable/ic_remove_red_eye"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Digite sua senha"
+                    android:inputType="textPassword"/>
+            </android.support.design.widget.TextInputLayout>
+
 
     <Button
         android:id="@+id/BtnLogin"
@@ -61,7 +65,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Não tem uma conta? Cadastre-se."/>
+
+
+
     </LinearLayout>
+
 
 
 </LinearLayout>
