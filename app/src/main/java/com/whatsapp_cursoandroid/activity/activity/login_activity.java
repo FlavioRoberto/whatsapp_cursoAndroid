@@ -87,6 +87,8 @@ public class login_activity extends AppCompatActivity {
             if(auth.getCurrentUser().isEmailVerified()){
                 redirecionaApp();
                 progressDialog.dimiss();
+            }else {
+                invocaSnackBar(auth.getCurrentUser());
             }
             progressDialog.dimiss();
         }
@@ -94,7 +96,7 @@ public class login_activity extends AppCompatActivity {
 
     private void logarUsuario(){
       if(verificaCampoEmailSenha()) {
-          logou = true;
+
           progressDialog.show("Aguarde", "Realizando Login...");
           auth = ConfiguracaoFirebase.getFirebaseAuth();
           auth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -102,17 +104,21 @@ public class login_activity extends AppCompatActivity {
               public void onComplete(@NonNull Task<AuthResult> task) {
                   if (task.isSuccessful()) {
                       logou = true;
+                      verificaUsuarioLogado();
                   } else {
                       String erro;
                       try {
                           throw task.getException();
                       } catch (FirebaseAuthInvalidUserException e) {
                           erro = "E-mail inválido";
+                          logou = false;
                       } catch (FirebaseAuthInvalidCredentialsException e) {
                           erro = "Senha inválida";
+                          logou = false;
                       } catch (Exception e) {
                           erro = "Erro a logar\n" + e.getMessage();
                           e.printStackTrace();
+                          logou = false;
                       }
                       progressDialog.dimiss();
                       logou = false;
@@ -121,20 +127,6 @@ public class login_activity extends AppCompatActivity {
               }
           });
 
-          if (auth.getCurrentUser() != null) {
-              final FirebaseUser user = auth.getCurrentUser();
-
-              if (!user.isEmailVerified() && logou == true) {
-                  progressDialog.dimiss();
-                  invocaSnackBar(user);
-              } else if (user.isEmailVerified() && logou == true) {
-                  progressDialog.dimiss();
-                  redirecionaApp();
-
-              }else {
-                  progressDialog.dimiss();
-              }
-          }
       }
     }
 
