@@ -94,6 +94,7 @@ public class login_activity extends AppCompatActivity {
 
     private void logarUsuario(){
       if(verificaCampoEmailSenha()) {
+          logou = true;
           progressDialog.show("Aguarde", "Realizando Login...");
           auth = ConfiguracaoFirebase.getFirebaseAuth();
           auth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -130,6 +131,8 @@ public class login_activity extends AppCompatActivity {
                   progressDialog.dimiss();
                   redirecionaApp();
 
+              }else {
+                  progressDialog.dimiss();
               }
           }
       }
@@ -143,7 +146,7 @@ public class login_activity extends AppCompatActivity {
 
     private void invocaSnackBar(final FirebaseUser user){
          snackbar = Snackbar
-                .make(snackView, "E-mail nao validado, Por favor veridique o e-mail de validação enviado para você.",
+                .make(snackView, "E-mail nao validado, Por favor verifique seu e-mail.",
                         Snackbar.LENGTH_LONG).setAction("Reenviar E-mail", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
