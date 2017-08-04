@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="logo_heigth">160dp</dimen>
+    <dimen name="H1">20sp</dimen>
+    <dimen name="H2">16sp</dimen>
+</resources>
