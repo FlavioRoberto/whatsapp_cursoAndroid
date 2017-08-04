@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".activity.activity.MainActivity" />
         <activity android:name=".activity.activity.validadorActivity" />
-        <activity android:name=".activity.activity.LoginTelefoneActivity"></activity>
+        <activity android:name=".activity.activity.LoginTelefoneActivity" />
+        <activity android:name=".activity.activity.CadastroActivity"></activity>
     </application>
 
 </manifest>
