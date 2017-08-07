@@ -67,6 +67,7 @@
             android:gravity="center"
             android:onClick="redirecionaCadastro"
             android:text="Não tem uma conta? Cadastre-se."
+            android:textColor="@android:color/white"
             android:textSize="@dimen/H2" />
 
             <View

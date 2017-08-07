@@ -6,25 +6,25 @@
         android:id="@+id/menu_buscar"
         android:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/ic_search"
-        android:title="Search"
+        android:title="@string/search"
         app:showAsAction="always"
         />
 
     <item
         android:id="@+id/menu_contatos"
-        android:title="contatos"
+        android:title="@string/contatos"
         app:showAsAction="always"
         android:icon="@drawable/ic_group"
         />
     <item
         android:id="@+id/menu_configuracoes"
-        android:title="Configurações"
+        android:title="@string/configuracoes"
         app:showAsAction="never"
         />
 
     <item
         android:id="@+id/menu_sair"
-        android:title="Sair"
+        android:title="@string/sair"
         app:showAsAction="never"
         />
 </menu>

@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.whatsapp_cursoandroid.R;
+import com.whatsapp_cursoandroid.activity.Helper.funcaoToolbar;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        funcaoToolbar.selecionaMenu(this,item.getItemId());
         return super.onOptionsItemSelected(item);
     }
 }

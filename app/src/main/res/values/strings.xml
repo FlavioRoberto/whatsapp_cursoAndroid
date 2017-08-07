@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">whatsapp_cursoAndroid</string>
+    <string name="configuracoes">Configurações</string>
+    <string name="sair">Sair</string>
+    <string name="search">Search</string>
+    <string name="contatos">contatos</string>
 </resources>
