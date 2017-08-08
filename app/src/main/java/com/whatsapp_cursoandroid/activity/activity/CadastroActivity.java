@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.whatsapp_cursoandroid.R;
+import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Model.Usuario;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
@@ -73,11 +74,13 @@ public class CadastroActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         FirebaseUser user = task.getResult().getUser();
-                        usuario.setId(user.getUid());
+                        //converte o email para o formato do id
+                        String identificadorUsuario = Base64ToString.criptografa(usuario.getEmail());
+                        usuario.setId(identificadorUsuario);
                         usuario.create();
                         user.sendEmailVerification();
                         Toast.makeText(CadastroActivity.this,"Cadastrado com sucesso",Toast.LENGTH_SHORT).show();
-                        autenticacao.signOut();
+
                         finish();
                     }else {
                         String erro;

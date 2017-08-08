@@ -4,16 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context="com.whatsapp_cursoandroid.activity.activity.MainActivity">
 
    <include android:id="@+id/ToolbarId"
       layout="@layout/toolbar"/>
 
-   <Button
-       android:layout_gravity="center"
-       android:id="@+id/BtnDeslogar"
-       android:layout_width="wrap_content"
+   <com.whatsapp_cursoandroid.activity.Helper.SlidingTabLayout
+       android:id="@+id/stl_tabs"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:text="Deslogar"/>
+       android:background="@color/colorPrimary"
+       app:tabSelectedTextColor="@android:color/white"
+       android:isScrollContainer="true"
+
+       />
+
+   <android.support.v4.view.ViewPager
+       android:id="@+id/vp_tabs"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight="1"/>
 
 </LinearLayout>
