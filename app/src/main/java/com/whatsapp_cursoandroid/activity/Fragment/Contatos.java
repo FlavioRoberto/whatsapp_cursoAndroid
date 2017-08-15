@@ -19,11 +19,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
+import com.whatsapp_cursoandroid.activity.Adapter.contatosAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 /**
@@ -32,8 +34,8 @@ import java.util.ArrayList;
 public class Contatos extends Fragment {
 
     private ListView listaContatos;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> contatos;
+    private contatosAdapter adapter;
+    private ArrayList<Contato> contatos;
     private DatabaseReference databaseReference;
     private ValueEventListener valueEventListener;
 
@@ -56,11 +58,8 @@ public class Contatos extends Fragment {
         //alimentando lista de contatos
         listaContatos();
 
-
         //ppreparando adapter
-        adapter = new ArrayAdapter<>(getContext(),
-                R.layout.list_contatos,
-                contatos);
+        adapter = new contatosAdapter(getActivity(),contatos);
 
         //preparando listView
         listaContatos.setAdapter(adapter);
@@ -77,7 +76,7 @@ public class Contatos extends Fragment {
                 contatos.clear();
                 for(DataSnapshot contatoSnapshot: dataSnapshot.getChildren()){
                     Contato contato = contatoSnapshot.getValue(Contato.class);
-                    contatos.add(contato.getEmail());
+                    contatos.add(contato);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -92,7 +91,7 @@ public class Contatos extends Fragment {
 
     private String retornaEmailBase64(){
        Preferencias preferencias = new Preferencias(getActivity());
-        Toast.makeText(getActivity(),Base64ToString.criptografa(preferencias.getEmail()),Toast.LENGTH_LONG).show();
+       // Toast.makeText(getActivity(),Base64ToString.criptografa(preferencias.getEmail()),Toast.LENGTH_LONG).show();
        return  Base64ToString.criptografa(preferencias.getEmail());
     }
 
