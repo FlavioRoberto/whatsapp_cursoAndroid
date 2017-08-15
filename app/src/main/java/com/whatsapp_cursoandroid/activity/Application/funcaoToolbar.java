@@ -90,7 +90,7 @@ public class funcaoToolbar {
                                     //passando valores pra classe contato
                                     Contato contato = new Contato();
                                     contato.setId(identificadorContato);
-                                    contato.setEmail(userLogado.getEmail());
+                                    contato.setEmail(contatoUser.getEmail());
                                     contato.setStatus(contatoUser.getStatus());
                                     contato.setNome(contatoUser.getNome());
                                     contato.setTelefone(contatoUser.getTelefone());

@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Application.invocaProgressDialog;
+import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Model.Usuario;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
@@ -33,6 +34,7 @@ public class login_activity extends AppCompatActivity {
     private View snackView;
     private Snackbar snackBar;
     private  boolean logou = false;
+    private Preferencias preferencias;
     private Snackbar snackbar;
     private invocaProgressDialog progressDialog;
 
@@ -48,6 +50,7 @@ public class login_activity extends AppCompatActivity {
         btnLogar = (Button)findViewById(R.id.BtnLogin);
         snackView = (View)findViewById(R.id.snackView);
         progressDialog = new invocaProgressDialog(login_activity.this);
+        preferencias = new Preferencias(login_activity.this);
 
         verificaUsuarioLogado();
 
@@ -85,6 +88,7 @@ public class login_activity extends AppCompatActivity {
         if(auth.getCurrentUser() != null){
             progressDialog.show("aguarde","Logando...");
             if(auth.getCurrentUser().isEmailVerified()){
+                preferencias.putEmail(auth.getCurrentUser().getEmail());
                 redirecionaApp();
                 progressDialog.dimiss();
             }else {
@@ -131,6 +135,7 @@ public class login_activity extends AppCompatActivity {
     }
 
     private void redirecionaApp(){
+
         Intent intent = new Intent(login_activity.this,MainActivity.class);
         startActivity(intent);
         finish();
