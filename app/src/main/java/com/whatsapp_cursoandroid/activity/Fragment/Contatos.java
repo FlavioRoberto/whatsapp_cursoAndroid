@@ -1,12 +1,14 @@
 package com.whatsapp_cursoandroid.activity.Fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.whatsapp_cursoandroid.activity.Adapter.contatosAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
+import com.whatsapp_cursoandroid.activity.activity.ConversaActivity;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
 import java.io.ByteArrayInputStream;
@@ -59,12 +62,32 @@ public class Contatos extends Fragment {
         listaContatos();
 
         //ppreparando adapter
-        adapter = new contatosAdapter(getActivity(),contatos);
+        adapter = new contatosAdapter(getContext(),contatos);
 
         //preparando listView
         listaContatos.setAdapter(adapter);
 
+        //ao clicar na lista
+        listaContatos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              redirecionaConversa(position);
+            }
+        });
+
+
         return view;
+    }
+
+    private void redirecionaConversa(int position){
+        Contato contato = contatos.get(position);
+        Intent intent = new Intent(getActivity(),ConversaActivity.class);
+        intent.putExtra("NomeContato",contato.getNome());
+        intent.putExtra("EmailContato",contato.getEmail());
+        intent.putExtra("TelefoneContato",contato.getTelefone());
+        intent.putExtra("StatusCOntato",contato.getStatus());
+        intent.putExtra("ID",contato.getId());
+        startActivity(intent);
     }
 
     private void listaContatos() {

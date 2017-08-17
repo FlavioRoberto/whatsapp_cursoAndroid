@@ -19,7 +19,10 @@
         <activity android:name=".activity.activity.MainActivity" />
         <activity android:name=".activity.activity.validadorActivity" />
         <activity android:name=".activity.activity.LoginTelefoneActivity" />
-        <activity android:name=".activity.activity.CadastroActivity"></activity>
+        <activity android:name=".activity.activity.CadastroActivity" />
+        <activity android:name=".activity.activity.ConversaActivity"
+            android:parentActivityName=".activity.activity.MainActivity">
+        </activity>
     </application>
 
 </manifest>

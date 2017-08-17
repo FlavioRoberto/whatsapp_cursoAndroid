@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/batman"
+    android:orientation="vertical"
+    tools:context="com.whatsapp_cursoandroid.activity.activity.ConversaActivity">
+
+    <include android:id="@+id/ToolbarId"
+        layout="@layout/toolbar"/>
+
+    <ListView
+        android:id="@+id/listaConversa"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="8dp">
+
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:padding="8dp"
+            android:background="@drawable/layput_campo_mensagem"
+            android:id="@+id/textoMensagem"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:hint="@string/digite_a_mensagem"
+            android:textColorHint="@color/colorPrimary"
+            android:inputType="textMultiLine"
+            android:textColor="@android:color/black"
+            android:layout_marginRight="4dp"
+            />
+        <ImageView
+            android:id="@+id/btnMensagem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/botao_enviar"
+            android:src="@drawable/ic_action_send"/>
+    </LinearLayout>
+
+</LinearLayout>

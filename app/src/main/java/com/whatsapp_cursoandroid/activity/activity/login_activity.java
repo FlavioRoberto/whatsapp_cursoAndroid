@@ -108,6 +108,7 @@ public class login_activity extends AppCompatActivity {
               public void onComplete(@NonNull Task<AuthResult> task) {
                   if (task.isSuccessful()) {
                       logou = true;
+                      preferencias.putEmail(usuario.getEmail());
                       verificaUsuarioLogado();
                   } else {
                       String erro;
