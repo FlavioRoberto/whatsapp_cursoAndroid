@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
+import com.whatsapp_cursoandroid.activity.Adapter.mensagensAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
@@ -30,8 +31,8 @@ public class ConversaActivity extends AppCompatActivity {
     private ImageView btnMensagem;
     private ListView listMensagens;
     private EditText textoMensagem;
-    private ArrayList<String> mensagens;
-    private ArrayAdapter<String> adapter;
+    private ArrayList<Mensagem> mensagens;
+    private mensagensAdapter adapter;
     private DatabaseReference databaseReference;
     private Preferencias preferencias;
     private String IdRemetente, IdDestinatario;
@@ -52,20 +53,21 @@ public class ConversaActivity extends AppCompatActivity {
         mensagens = new ArrayList<>();
         preferencias = new Preferencias(getApplicationContext());
         IdRemetente = Base64ToString.criptografa(preferencias.getEmail());
-
+/*
         //recupera mensagens do banco
         databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
                 .child(IdRemetente).child(contato.getId());
-
+*/
         //preparano Toolbar
         toolbar.setTitle(contato.getNome());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
 
+        //metodo pra recuperar a mensagem do banco
         recuperaMensagem();
 
         //preparaListView
-        adapter = new ArrayAdapter<>(ConversaActivity.this,android.R.layout.simple_expandable_list_item_1,mensagens);
+        adapter = new mensagensAdapter(getApplication(),mensagens);
         listMensagens.setAdapter(adapter);
     }
 
@@ -79,7 +81,7 @@ public class ConversaActivity extends AppCompatActivity {
                 mensagens.clear();
                 //Recuperando Mensagens
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String mensagem = snapshot.getValue(Mensagem.class).getMensagem();
+                    Mensagem mensagem = snapshot.getValue(Mensagem.class);
                     if(mensagem != null)
                         mensagens.add(mensagem);
                 }
@@ -110,13 +112,20 @@ public class ConversaActivity extends AppCompatActivity {
             Mensagem mensagem = new Mensagem();
             mensagem.setIdUsuario(IdRemetente);
             mensagem.setMensagem(textoMensagem.getText().toString());
+
+            //salva mensagem remetente
             salvarMensagem(IdRemetente,contato.getId(),mensagem);
+            //salva mensagem destinatario
+            salvarMensagem(contato.getId(),IdRemetente,mensagem);
+
             textoMensagem.setText("");
         }
     }
 
     private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem){
         try{
+            databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
+                    .child(idRemetente).child(idDestinatario);
             databaseReference.push().setValue(Mensagem);
             return true;
         }catch (Exception e){

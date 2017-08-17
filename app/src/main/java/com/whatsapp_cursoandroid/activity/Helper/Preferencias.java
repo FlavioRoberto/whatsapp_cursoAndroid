@@ -13,7 +13,8 @@ public class Preferencias {
 
     private SharedPreferences preferences ;
     private Context context;
-    private final String EMAIL_USUARIO = "email";
+    private String idUsuario;
+    private final String EMAIL_USUARIO = "email", ID_USUARIO = "idUsuario";
 
     public Preferencias( Context context) {
         this.context = context;
@@ -23,6 +24,8 @@ public class Preferencias {
     public void putEmail(String email){
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(EMAIL_USUARIO,email);
+        String idUsuario = Base64ToString.criptografa(email);
+        editor.putString(ID_USUARIO,idUsuario);
         editor.apply();
     }
 
@@ -36,4 +39,13 @@ public class Preferencias {
         return "";
     }
 
+    public String getIdUsuario(){
+        String result = preferences.getString(ID_USUARIO,"");
+
+        if(result != null){
+            return result;
+        }
+
+        return "";
+    }
 }

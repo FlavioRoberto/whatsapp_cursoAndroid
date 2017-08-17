@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
@@ -44,8 +45,13 @@ public class contatosAdapter extends ArrayAdapter<Contato> {
             view = inflater.inflate(R.layout.list_contatos,parent,false);
 
             //instancia objetos da view
-            TextView nomeContato = (TextView)view.findViewById(R.id.nomeUsuario);
-            TextView emailContato = (TextView)view.findViewById(R.id.emailusuario);
+            TextView imagemContato = (TextView)view.findViewById(R.id.imagem_contato);
+            TextView nomeContato = (TextView)view.findViewById(R.id.nome_contato);
+            TextView emailContato = (TextView)view.findViewById(R.id.email_contato);
+
+            //recupera a primeira letra do nome da pessoa;
+            String primeiraLetraNome = arrayContato.get(position).getNome().substring(0,1).toUpperCase();
+            imagemContato.setText(primeiraLetraNome);
 
             nomeContato.setText(arrayContato.get(position).getNome());
             emailContato.setText(arrayContato.get(position).getEmail());
