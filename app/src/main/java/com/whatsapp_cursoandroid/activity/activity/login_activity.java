@@ -84,11 +84,11 @@ public class login_activity extends AppCompatActivity {
     }
 
     private void verificaUsuarioLogado(){
+
         auth = ConfiguracaoFirebase.getFirebaseAuth();
         if(auth.getCurrentUser() != null){
             progressDialog.show("aguarde","Logando...");
             if(auth.getCurrentUser().isEmailVerified()){
-                preferencias.putEmail(auth.getCurrentUser().getEmail());
                 redirecionaApp();
                 progressDialog.dimiss();
             }else {
@@ -100,7 +100,6 @@ public class login_activity extends AppCompatActivity {
 
     private void logarUsuario(){
       if(verificaCampoEmailSenha()) {
-
           progressDialog.show("Aguarde", "Realizando Login...");
           auth = ConfiguracaoFirebase.getFirebaseAuth();
           auth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -108,7 +107,11 @@ public class login_activity extends AppCompatActivity {
               public void onComplete(@NonNull Task<AuthResult> task) {
                   if (task.isSuccessful()) {
                       logou = true;
-                      preferencias.putEmail(usuario.getEmail());
+                      //pega o dados do usuario logado
+                       preferencias.putEmail(usuario.getEmail());
+                       preferencias.putNome();
+                      Toast.makeText(getApplicationContext(),"Nome"+preferencias.getNomeUsuario(),Toast.LENGTH_SHORT).show();
+
                       verificaUsuarioLogado();
                   } else {
                       String erro;

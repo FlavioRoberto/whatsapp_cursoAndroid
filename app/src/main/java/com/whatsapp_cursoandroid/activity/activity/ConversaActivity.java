@@ -1,16 +1,15 @@
 package com.whatsapp_cursoandroid.activity.activity;
 
+import android.database.DataSetObserver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,7 +18,9 @@ import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Adapter.mensagensAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
+import com.whatsapp_cursoandroid.activity.Helper.formataData;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
+import com.whatsapp_cursoandroid.activity.Model.Conversa;
 import com.whatsapp_cursoandroid.activity.Model.Mensagem;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
@@ -35,6 +36,7 @@ public class ConversaActivity extends AppCompatActivity {
     private mensagensAdapter adapter;
     private DatabaseReference databaseReference;
     private Preferencias preferencias;
+    private int cont = 0;
     private String IdRemetente, IdDestinatario;
 
     @Override
@@ -53,12 +55,8 @@ public class ConversaActivity extends AppCompatActivity {
         mensagens = new ArrayList<>();
         preferencias = new Preferencias(getApplicationContext());
         IdRemetente = Base64ToString.criptografa(preferencias.getEmail());
-/*
-        //recupera mensagens do banco
-        databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
-                .child(IdRemetente).child(contato.getId());
-*/
-        //preparano Toolbar
+
+     //preparano Toolbar
         toolbar.setTitle(contato.getNome());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
@@ -69,10 +67,25 @@ public class ConversaActivity extends AppCompatActivity {
         //preparaListView
         adapter = new mensagensAdapter(getApplication(),mensagens);
         listMensagens.setAdapter(adapter);
+        //modo de transferencia automatica do lsit view
+        listMensagens.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+        //move listView direto pro final da lista
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                listMensagens.setSelection(adapter.getCount() - 1);
+            }
+        });
     }
 
-    private void recuperaMensagem(){
 
+
+    private void recuperaMensagem(){
+        //recupera mensagens do banco
+        databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
+                .child(IdRemetente).child(contato.getId());
         //prepara event Listener
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -113,13 +126,50 @@ public class ConversaActivity extends AppCompatActivity {
             mensagem.setIdUsuario(IdRemetente);
             mensagem.setMensagem(textoMensagem.getText().toString());
 
-            //salva mensagem remetente
-            salvarMensagem(IdRemetente,contato.getId(),mensagem);
-            //salva mensagem destinatario
-            salvarMensagem(contato.getId(),IdRemetente,mensagem);
-
+            preparaMensagem(mensagem);
+            preparaConversa(mensagem);
             textoMensagem.setText("");
         }
+    }
+
+    private void preparaMensagem(Mensagem mensagem){
+        //salva mensagem remetente
+        boolean envioRemetente = salvarMensagem(IdRemetente, contato.getId(), mensagem);
+
+        if (!envioRemetente) {
+            Toast.makeText(getApplicationContext(), "Erro ao salvar mensagem, tente novamente", Toast.LENGTH_SHORT).show();
+        } else {
+            //salva mensagem destinatario
+            boolean envioDestinatario = salvarMensagem(contato.getId(), IdRemetente, mensagem);
+            if (!envioDestinatario) {
+                Toast.makeText(getApplicationContext(), "Erro ao enviar mensagem, tente novamente", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void preparaConversa(Mensagem mensagem){
+        //salvar conversa remetente
+        Conversa conversa = new Conversa();
+        conversa.setIdUsuario(contato.getId());
+        conversa.setNome(contato.getNome());
+        conversa.setMensagem(mensagem.getMensagem());
+        boolean retornoConversa = salvarConversa(IdRemetente, contato.getId(), conversa);
+
+        if (!retornoConversa) {
+            Toast.makeText(getApplicationContext(), "Erro ao salvar conversa, tente novamente", Toast.LENGTH_SHORT).show();
+        } else {
+            //salvar conversa destinatario
+            conversa = new Conversa();
+            conversa.setIdUsuario(preferencias.getIdUsuario());
+            conversa.setNome(preferencias.getNomeUsuario());
+            conversa.setMensagem(mensagem.getMensagem());
+            boolean retornaConversa = salvarConversa(contato.getId(),IdRemetente,conversa);
+            if(!retornaConversa){
+                Toast.makeText(getApplicationContext(), "Erro ao eviar conversa, tente novamente", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
     }
 
     private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem){
@@ -127,6 +177,21 @@ public class ConversaActivity extends AppCompatActivity {
             databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
                     .child(idRemetente).child(idDestinatario);
             databaseReference.push().setValue(Mensagem);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
+
+        conversa.setPeso( 1/(Float.parseFloat(String.valueOf(formataData.dataAtual().getTime()))));
+        conversa.setDataMensagem(formataData.dataAtual());
+        try{
+            databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("conversas")
+                    .child(idRemetente).child(idDestinatario);
+            databaseReference.setValue(conversa);
             return true;
         }catch (Exception e){
             e.printStackTrace();

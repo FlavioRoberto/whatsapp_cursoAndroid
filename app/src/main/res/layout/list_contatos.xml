@@ -4,52 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-
-        android:layout_margin="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/imagem_contato"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="G"
-            android:textSize="28sp"
-            android:layout_marginRight="8dp"
-            android:textColor="@android:color/white"
-            android:background="@drawable/backgroud_imagem_conversas"
-            />
-
-        <LinearLayout
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            >
-
-            <TextView
-                android:id="@+id/nome_contato"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="20sp"
-                android:text="Nome Contato conversa"
-                android:textColor="#292929"
-                />
-
-            <TextView
-                android:id="@+id/email_contato"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="trecho conversa"
-                android:textSize="16sp"
-                android:textColor="#313131"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+   <include android:id="@+id/contatosId"
+       layout="@layout/containner_contatos"/>
 
 </LinearLayout>
