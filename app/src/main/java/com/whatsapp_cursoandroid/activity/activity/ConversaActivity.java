@@ -46,13 +46,11 @@ public class ConversaActivity extends AppCompatActivity{
     private Usuario usuarioLogado;
     public static ConversaActivity aberta;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversa);
-
-
-
         aberta = this;
 
         //instanciando componentes
@@ -130,7 +128,7 @@ public class ConversaActivity extends AppCompatActivity{
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                atualizaVisualizacaoConversa();
                 mensagens.clear();
                 //Recuperando Mensagens
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
@@ -267,13 +265,16 @@ public class ConversaActivity extends AppCompatActivity{
     }
 
     private void atualizaVisualizacaoConversa(){
-        try {
-            ConfiguracaoFirebase.getDatabaseReference().child("conversas")
-                    .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
-        }catch (Exception e){
-            e.printStackTrace();
+        if(aberta != null) {
+            try {
+                ConfiguracaoFirebase.getDatabaseReference().child("conversas")
+                        .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
     private void pegaPutExtra() {
 
         Bundle extra = getIntent().getExtras();
