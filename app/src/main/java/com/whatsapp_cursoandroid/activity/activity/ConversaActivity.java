@@ -51,6 +51,8 @@ public class ConversaActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversa);
 
+
+
         aberta = this;
 
         //instanciando componentes
@@ -68,6 +70,7 @@ public class ConversaActivity extends AppCompatActivity{
 
         //pega valores passado da outra aberta (Contato)
         pegaPutExtra();
+        atualizaVisualizacaoConversa();
 
         //apaga notificação de nova mensagem ao abrir a mensagem
         geraNotificacao.apagaNotificacaoEspecifica(this,contato.getId());
@@ -106,7 +109,7 @@ public class ConversaActivity extends AppCompatActivity{
           pushNotification.setEmailContato(Base64ToString.descriptografa(idUsuarioDestinatario));
           pushNotification.setMensagem(mensagem);
           DatabaseReference databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("notificacao");
-          databaseReference.child(idUsuarioDestinatario).child(preferencias.getIdUsuario()).setValue(pushNotification);
+          databaseReference.child(idUsuarioDestinatario).child(IdRemetente).setValue(pushNotification);
       }catch (Exception e){
           e.printStackTrace();
       }
@@ -249,6 +252,8 @@ public class ConversaActivity extends AppCompatActivity{
 
         conversa.setPeso( 1/(Float.parseFloat(String.valueOf(formataData.dataAtual().getTime()))));
         conversa.setDataMensagem(formataData.dataAtual());
+        conversa.setNovasMensagens(true);
+
         try{
             databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("conversas")
                     .child(idRemetente).child(idDestinatario);
@@ -261,6 +266,14 @@ public class ConversaActivity extends AppCompatActivity{
         }
     }
 
+    private void atualizaVisualizacaoConversa(){
+        try {
+            ConfiguracaoFirebase.getDatabaseReference().child("conversas")
+                    .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     private void pegaPutExtra() {
 
         Bundle extra = getIntent().getExtras();
@@ -272,4 +285,6 @@ public class ConversaActivity extends AppCompatActivity{
             contato.setId(extra.getString("ID"));
         }
     }
+
+
 }

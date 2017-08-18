@@ -22,6 +22,7 @@ import com.whatsapp_cursoandroid.activity.Adapter.conversaAdapter;
 import com.whatsapp_cursoandroid.activity.Adapter.mensagensAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
+import com.whatsapp_cursoandroid.activity.Helper.formataData;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
 import com.whatsapp_cursoandroid.activity.Model.Conversa;
 import com.whatsapp_cursoandroid.activity.Model.Mensagem;
@@ -80,12 +81,14 @@ public class Conversas extends Fragment {
 
         if (conversa != null) {
             Intent intent = new Intent(getActivity(), ConversaActivity.class);
+            conversa.setNovasMensagens(false);
             intent.putExtra("NomeContato", conversa.getNome());
             intent.putExtra("EmailContato", Base64ToString.descriptografa(conversa.getIdUsuario()));
             intent.putExtra("TelefoneContato", "");
             intent.putExtra("StatusCOntato", "");
             intent.putExtra("ID", conversa.getIdUsuario());
             startActivity(intent);
+
         }
     }
 
@@ -114,6 +117,8 @@ public class Conversas extends Fragment {
         });
 
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

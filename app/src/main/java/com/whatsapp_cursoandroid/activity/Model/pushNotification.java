@@ -12,6 +12,8 @@ public class pushNotification {
     public pushNotification() {
     }
 
+
+
     public String getEmailRemetente() {
         return emailRemetente;
     }

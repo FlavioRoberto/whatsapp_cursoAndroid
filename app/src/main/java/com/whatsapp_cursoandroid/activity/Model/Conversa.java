@@ -7,6 +7,7 @@ import java.util.Date;
  */
 
 public class Conversa {
+
     private  float peso;
     private String idUsuario;
     private Date dataMensagem;
