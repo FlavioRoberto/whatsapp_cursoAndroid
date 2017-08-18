@@ -1,15 +1,8 @@
 package com.whatsapp_cursoandroid.activity.activity;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.database.DataSetObserver;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -18,11 +11,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Adapter.mensagensAdapter;
@@ -53,13 +44,14 @@ public class ConversaActivity extends AppCompatActivity{
     private int cont = 0;
     private String IdRemetente, IdDestinatario, nomeRemetente;
     private Usuario usuarioLogado;
-    public static String Destinatario;
-
+    public static ConversaActivity aberta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversa);
+
+        aberta = this;
 
         //instanciando componentes
         toolbar = (Toolbar)findViewById(R.id.ToolbarId);
@@ -72,12 +64,9 @@ public class ConversaActivity extends AppCompatActivity{
         nomeRemetente =  preferencias.getNomeUsuario();
         contato = new Contato();
 
-        //pega o valor do id destinatario pra comparar com outra activity
-        Destinatario = contato.getId();
-
         retornaNomeUsuarioLogado();
 
-        //pega valores passado da outra activity (Contato)
+        //pega valores passado da outra aberta (Contato)
         pegaPutExtra();
 
         //apaga notificação de nova mensagem ao abrir a mensagem
@@ -121,6 +110,12 @@ public class ConversaActivity extends AppCompatActivity{
       }catch (Exception e){
           e.printStackTrace();
       }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        aberta = null;
     }
 
     private void recuperaMensagem(){

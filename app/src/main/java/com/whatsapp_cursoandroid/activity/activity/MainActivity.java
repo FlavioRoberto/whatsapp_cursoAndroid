@@ -27,7 +27,7 @@ import com.whatsapp_cursoandroid.activity.config.TestService;
 public class MainActivity extends AppCompatActivity {
 
 
-
+    public static MainActivity aberta;
     private Button btnDeslogar;
     private FirebaseAuth auth;
     private Toolbar toolbar;
@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startService(new Intent(getBaseContext(), TestService.class));
+
+        aberta = this;
 
         //invoca componentes
         auth = ConfiguracaoFirebase.getFirebaseAuth();
@@ -67,6 +69,12 @@ public class MainActivity extends AppCompatActivity {
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this,R.color.colorAccent));
         slidingTabLayout.setViewPager(viewPager);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        aberta = null;
     }
 
     @Override

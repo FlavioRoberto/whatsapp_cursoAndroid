@@ -5,15 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 
 import com.whatsapp_cursoandroid.R;
-import com.whatsapp_cursoandroid.activity.Model.Contato;
-import com.whatsapp_cursoandroid.activity.Model.pushNotification;
 import com.whatsapp_cursoandroid.activity.activity.ConversaActivity;
 import com.whatsapp_cursoandroid.activity.activity.MainActivity;
-import com.whatsapp_cursoandroid.activity.activity.login_activity;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
 /**
@@ -27,10 +23,9 @@ public class geraNotificacao {
     private static Preferencias preferencias;
 
     public static void notification(Context context,String nomeRemetente,String emailDestinatario,String emailRemetente, String mensagem) {
-       if(preferencias == null) {
-           preferencias = new Preferencias(context);
-       }
-        if (ConversaActivity.Destinatario != preferencias.getIdUsuario() ) {
+
+        if((ConversaActivity.aberta == null && MainActivity.aberta == null)){
+
             mBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(context)
                             .setSmallIcon(R.drawable.ic_action_search)
@@ -46,7 +41,7 @@ public class geraNotificacao {
             resultIntent.putExtra("ID", Base64ToString.criptografa(emailRemetente));
 
 
-            // Because clicking the notification opens a new ("special") activity, there's
+            // Because clicking the notification opens a new ("special") aberta, there's
             // no need to create an artificial back stack.
             PendingIntent resultPendingIntent =
                     PendingIntent.getActivity(
