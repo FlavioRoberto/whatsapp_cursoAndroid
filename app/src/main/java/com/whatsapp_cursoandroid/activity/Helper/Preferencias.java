@@ -21,19 +21,27 @@ public class Preferencias {
 
     private SharedPreferences preferences ;
     private Context context;
-    private final String EMAIL_USUARIO = "email", ID_USUARIO = "idUsuario",NOME_USUARIO="nomeUsuario";
+    private final String EMAIL_USUARIO = "email", ID_USUARIO = "idUsuario",NOME_USUARIO="nomeUSER";
 
     public Preferencias( Context context) {
         this.context = context;
-        preferences =  context.getSharedPreferences("preferencias",context.MODE_PRIVATE);
+        preferences =  context.getSharedPreferences("preferencias", Context.MODE_PRIVATE);
     }
 
     public void putEmail(String email){
         SharedPreferences.Editor editor = preferences.edit();
+
         editor.putString(EMAIL_USUARIO,email);
+        editor.apply();
         String idUsuario = Base64ToString.criptografa(email);
         editor.putString(ID_USUARIO,idUsuario);
         editor.apply();
+    }
+
+    public void putNome(String nome){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(NOME_USUARIO,nome);
+        editor.commit();
     }
 
     public String getEmail(){
@@ -55,37 +63,9 @@ public class Preferencias {
         return "";
     }
 
-    public void putNome() {
-        final SharedPreferences.Editor editor = preferences.edit();
-        DatabaseReference databaseReference = ConfiguracaoFirebase.getDatabaseReference();
-        String Idusuario = getIdUsuario();
-        if (Idusuario != null) {
-         databaseReference.child("usuarios").child(Idusuario);
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot != null) {
-                        Usuario usuario = dataSnapshot.getValue(Usuario.class);
-                        editor.putString(NOME_USUARIO, usuario.getNome());
-                        editor.apply();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
     public String getNomeUsuario(){
-        String result = preferences.getString(NOME_USUARIO,"");
+        return  preferences.getString(NOME_USUARIO,"");
 
-        if(result != null){
-            return result;
-        }
-
-        return "";
     }
+
 }

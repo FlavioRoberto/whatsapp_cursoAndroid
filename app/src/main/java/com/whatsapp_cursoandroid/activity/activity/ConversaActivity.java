@@ -1,8 +1,15 @@
 package com.whatsapp_cursoandroid.activity.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -10,23 +17,30 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Adapter.mensagensAdapter;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Helper.formataData;
+import com.whatsapp_cursoandroid.activity.Helper.geraNotificacao;
 import com.whatsapp_cursoandroid.activity.Model.Contato;
 import com.whatsapp_cursoandroid.activity.Model.Conversa;
 import com.whatsapp_cursoandroid.activity.Model.Mensagem;
+import com.whatsapp_cursoandroid.activity.Model.Usuario;
+import com.whatsapp_cursoandroid.activity.Model.pushNotification;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
 
 import java.util.ArrayList;
 
-public class ConversaActivity extends AppCompatActivity {
+@SuppressWarnings("WrongConstant")
+public class ConversaActivity extends AppCompatActivity{
     private Contato contato;
     private Toolbar toolbar;
     private ImageView btnMensagem;
@@ -37,15 +51,15 @@ public class ConversaActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private Preferencias preferencias;
     private int cont = 0;
-    private String IdRemetente, IdDestinatario;
+    private String IdRemetente, IdDestinatario, nomeRemetente;
+    private Usuario usuarioLogado;
+    public static String Destinatario;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversa);
-
-        //pega valores passado da outra activity (Contato)
-        pegaPutExtra();
 
         //instanciando componentes
         toolbar = (Toolbar)findViewById(R.id.ToolbarId);
@@ -53,10 +67,23 @@ public class ConversaActivity extends AppCompatActivity {
         textoMensagem = (EditText) findViewById(R.id.textoMensagem);
         listMensagens = (ListView)findViewById(R.id.listaConversa);
         mensagens = new ArrayList<>();
-        preferencias = new Preferencias(getApplicationContext());
+        preferencias = new Preferencias(ConversaActivity.this);
         IdRemetente = Base64ToString.criptografa(preferencias.getEmail());
+        nomeRemetente =  preferencias.getNomeUsuario();
+        contato = new Contato();
 
-     //preparano Toolbar
+        //pega o valor do id destinatario pra comparar com outra activity
+        Destinatario = contato.getId();
+
+        retornaNomeUsuarioLogado();
+
+        //pega valores passado da outra activity (Contato)
+        pegaPutExtra();
+
+        //apaga notificação de nova mensagem ao abrir a mensagem
+        geraNotificacao.apagaNotificacaoEspecifica(this,contato.getId());
+
+        //preparano Toolbar
         toolbar.setTitle(contato.getNome());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
@@ -78,11 +105,26 @@ public class ConversaActivity extends AppCompatActivity {
                 listMensagens.setSelection(adapter.getCount() - 1);
             }
         });
+
+
     }
 
-
+    private void criaNotificacao(String idUsuarioDestinatario,String nomeUsuarioRemetente,String emailRemetente, String mensagem){
+      try {
+          pushNotification pushNotification = new pushNotification();
+          pushNotification.setNomeContato(nomeUsuarioRemetente);
+          pushNotification.setEmailRemetente(emailRemetente);
+          pushNotification.setEmailContato(Base64ToString.descriptografa(idUsuarioDestinatario));
+          pushNotification.setMensagem(mensagem);
+          DatabaseReference databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("notificacao");
+          databaseReference.child(idUsuarioDestinatario).child(preferencias.getIdUsuario()).setValue(pushNotification);
+      }catch (Exception e){
+          e.printStackTrace();
+      }
+    }
 
     private void recuperaMensagem(){
+
         //recupera mensagens do banco
         databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
                 .child(IdRemetente).child(contato.getId());
@@ -148,28 +190,52 @@ public class ConversaActivity extends AppCompatActivity {
     }
 
     private void preparaConversa(Mensagem mensagem){
+
         //salvar conversa remetente
         Conversa conversa = new Conversa();
         conversa.setIdUsuario(contato.getId());
         conversa.setNome(contato.getNome());
         conversa.setMensagem(mensagem.getMensagem());
+
         boolean retornoConversa = salvarConversa(IdRemetente, contato.getId(), conversa);
 
         if (!retornoConversa) {
             Toast.makeText(getApplicationContext(), "Erro ao salvar conversa, tente novamente", Toast.LENGTH_SHORT).show();
         } else {
             //salvar conversa destinatario
-            conversa = new Conversa();
-            conversa.setIdUsuario(preferencias.getIdUsuario());
-            conversa.setNome(preferencias.getNomeUsuario());
-            conversa.setMensagem(mensagem.getMensagem());
-            boolean retornaConversa = salvarConversa(contato.getId(),IdRemetente,conversa);
+           Conversa conversaDest = new Conversa();
+            conversaDest.setIdUsuario(preferencias.getIdUsuario());
+            conversaDest.setNome(nomeRemetente);
+            conversaDest.setMensagem(mensagem.getMensagem());
+
+            boolean retornaConversa = salvarConversa(contato.getId(),IdRemetente,conversaDest);
             if(!retornaConversa){
                 Toast.makeText(getApplicationContext(), "Erro ao eviar conversa, tente novamente", Toast.LENGTH_SHORT).show();
-
+            }else {
+                //metodo pra criar uma notificacao pro remetente da mensagem
+                criaNotificacao(contato.getId(),nomeRemetente,preferencias.getEmail(),conversa.getMensagem());
             }
         }
+    }
 
+    private void  retornaNomeUsuarioLogado() {
+        FirebaseAuth  auth = ConfiguracaoFirebase.getFirebaseAuth();
+        if (auth != null) {
+            DatabaseReference databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("usuarios")
+                    .child(IdRemetente);
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                   nomeRemetente = (dataSnapshot.getValue(Usuario.class).getNome());
+                    Toast.makeText(ConversaActivity.this,"Nome:"+dataSnapshot.getValue(Usuario.class).getNome(),Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem){
@@ -192,6 +258,7 @@ public class ConversaActivity extends AppCompatActivity {
             databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("conversas")
                     .child(idRemetente).child(idDestinatario);
             databaseReference.setValue(conversa);
+
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -200,7 +267,6 @@ public class ConversaActivity extends AppCompatActivity {
     }
 
     private void pegaPutExtra() {
-        contato = new Contato();
 
         Bundle extra = getIntent().getExtras();
         if (extra != null) {

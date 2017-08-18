@@ -43,9 +43,6 @@ public class CadastroActivity extends AppCompatActivity {
         textConfirmaSenha = (EditText)findViewById(R.id.EditTextConfirmaSenha);
         btnCadastrar = (Button)findViewById(R.id.BtnCadastrar);
 
-
-
-
         //ao clicar no botao
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override

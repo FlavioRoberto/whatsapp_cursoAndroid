@@ -19,8 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Application.invocaProgressDialog;
+import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Model.Usuario;
 import com.whatsapp_cursoandroid.activity.config.ConfiguracaoFirebase;
@@ -51,6 +56,7 @@ public class login_activity extends AppCompatActivity {
         snackView = (View)findViewById(R.id.snackView);
         progressDialog = new invocaProgressDialog(login_activity.this);
         preferencias = new Preferencias(login_activity.this);
+        usuario = new Usuario();
 
         verificaUsuarioLogado();
 
@@ -106,12 +112,11 @@ public class login_activity extends AppCompatActivity {
               @Override
               public void onComplete(@NonNull Task<AuthResult> task) {
                   if (task.isSuccessful()) {
-                      logou = true;
+                       logou = true;
                       //pega o dados do usuario logado
-                       preferencias.putEmail(usuario.getEmail());
-                       preferencias.putNome();
-                      Toast.makeText(getApplicationContext(),"Nome"+preferencias.getNomeUsuario(),Toast.LENGTH_SHORT).show();
-
+                      retornaNomeUsuarioLogado();
+                      preferencias.putEmail(usuario.getEmail());
+                      preferencias.putNome(usuario.getNome());
                       verificaUsuarioLogado();
                   } else {
                       String erro;
@@ -165,6 +170,26 @@ public class login_activity extends AppCompatActivity {
                 });
         snackbar.show();
     }
+
+    private void  retornaNomeUsuarioLogado() {
+        auth = ConfiguracaoFirebase.getFirebaseAuth();
+        if (auth != null) {
+            DatabaseReference databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("usuarios")
+                    .child(Base64ToString.criptografa(editTextEmail.getText().toString()));
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        usuario.setNome(dataSnapshot.getValue(Usuario.class).getNome());
+                        Toast.makeText(login_activity.this,"Nome:"+dataSnapshot.getValue(Usuario.class).getNome(),Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
 
     public void redirecionaCadastro(View view){
         Intent intent = new Intent(this,CadastroActivity.class);
