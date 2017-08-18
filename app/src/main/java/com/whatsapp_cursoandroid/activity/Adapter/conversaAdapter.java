@@ -78,7 +78,7 @@ public class conversaAdapter extends ArrayAdapter<Conversa> {
                 mensagemConversa.setText(conversa.getMensagem());
 
                 if(conversa.isNovasMensagens()){
-                    novaConversa.setText("Novas menssagens");
+                    novaConversa.setText("Novas mensagens");
                 }else {
                     novaConversa.setText("");
                 }
