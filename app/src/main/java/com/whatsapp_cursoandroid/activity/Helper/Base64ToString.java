@@ -15,8 +15,12 @@ public class Base64ToString {
         return Base64.encodeToString(baseToString.getBytes(),Base64.DEFAULT).replaceAll("(\\n|\\r)","");
     }
 
-    public static String descriptografa(String stringToBase){
-        return new String(Base64.decode(stringToBase.getBytes(),Base64.DEFAULT));
+    public static String descriptografa(String stringToBase) {
+        if (stringToBase != null) {
+            return new String(Base64.decode(stringToBase.getBytes(), Base64.DEFAULT));
+        }
+        return "";
     }
+
 
 }

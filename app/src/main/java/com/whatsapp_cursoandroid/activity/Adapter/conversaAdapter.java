@@ -48,7 +48,7 @@ public class conversaAdapter extends ArrayAdapter<Conversa> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = null;
 
-        if(!listConversas.isEmpty()){
+        if(!listConversas.isEmpty() && listConversas != null){
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_conversas,parent,false);
 
@@ -62,18 +62,22 @@ public class conversaAdapter extends ArrayAdapter<Conversa> {
 
             if(conversa != null) {
                 //recupera a primeira letra do nome da pessoa;
-                if(!conversa.getNome().isEmpty()) {
+                String nome = conversa.getNome();
+                if(nome != null) {
                     String primeiraLetraNome = conversa.getNome().substring(0, 1).toUpperCase();
                     imagemContato.setText(primeiraLetraNome);
                 }
+                //recupera data da mensagem
                 java.util.Date date = conversa.getDataMensagem();
 
-                if(date.equals(formataData.dataAtual())){
-                    dataMensagem.setText(formataData.dataToStringHora(conversa.getDataMensagem()));
-                }else {
-                    dataMensagem.setText(formataData.dataToStringDia(conversa.getDataMensagem()));
+                //se a data nao for nula atualoza no no
+                if(date  != null) {
+                    if (date.equals(formataData.dataAtual())) {
+                        dataMensagem.setText(formataData.dataToStringHora(conversa.getDataMensagem()));
+                    } else {
+                        dataMensagem.setText(formataData.dataToStringDia(conversa.getDataMensagem()));
+                    }
                 }
-
                 nomeContato.setText(conversa.getNome());
                 mensagemConversa.setText(conversa.getMensagem());
 

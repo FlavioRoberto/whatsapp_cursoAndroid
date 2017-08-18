@@ -44,6 +44,7 @@ public class ConversaActivity extends AppCompatActivity{
     private int cont = 0;
     private String IdRemetente, IdDestinatario, nomeRemetente;
     private Usuario usuarioLogado;
+    private Conversa conversa;
     public static ConversaActivity aberta;
 
 
@@ -54,6 +55,7 @@ public class ConversaActivity extends AppCompatActivity{
         aberta = this;
 
         //instanciando componentes
+        conversa = new Conversa();
         toolbar = (Toolbar)findViewById(R.id.ToolbarId);
         btnMensagem = (ImageView)findViewById(R.id.btnMensagem);
         textoMensagem = (EditText) findViewById(R.id.textoMensagem);
@@ -68,7 +70,10 @@ public class ConversaActivity extends AppCompatActivity{
 
         //pega valores passado da outra aberta (Contato)
         pegaPutExtra();
-        atualizaVisualizacaoConversa();
+        //metodo pra recuperar a mensagem do banco
+        recuperaMensagem();
+
+            atualizaVisualizacaoConversa();
 
         //apaga notificação de nova mensagem ao abrir a mensagem
         geraNotificacao.apagaNotificacaoEspecifica(this,contato.getId());
@@ -77,9 +82,6 @@ public class ConversaActivity extends AppCompatActivity{
         toolbar.setTitle(contato.getNome());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
-
-        //metodo pra recuperar a mensagem do banco
-        recuperaMensagem();
 
         //preparaListView
         adapter = new mensagensAdapter(getApplication(),mensagens);
@@ -135,6 +137,7 @@ public class ConversaActivity extends AppCompatActivity{
                     Mensagem mensagem = snapshot.getValue(Mensagem.class);
                     if(mensagem != null)
                         mensagens.add(mensagem);
+
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -268,7 +271,7 @@ public class ConversaActivity extends AppCompatActivity{
         if(aberta != null) {
             try {
                 ConfiguracaoFirebase.getDatabaseReference().child("conversas")
-                        .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
+                            .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -284,6 +287,7 @@ public class ConversaActivity extends AppCompatActivity{
             contato.setNome(extra.getString("NomeContato"));
             contato.setStatus(extra.getString("ContatoStatus"));
             contato.setId(extra.getString("ID"));
+
         }
     }
 
