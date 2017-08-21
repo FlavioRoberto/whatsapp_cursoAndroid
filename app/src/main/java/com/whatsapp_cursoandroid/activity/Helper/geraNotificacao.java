@@ -21,8 +21,10 @@ public class geraNotificacao {
     private static NotificationCompat.Builder mBuilder;
     private  static NotificationManager mNotifyMgr;
     private static Preferencias preferencias;
+    private static Intent resultIntent ;
+    private Context context;
 
-    public static void notification(Context context,String nomeRemetente,String emailDestinatario,String emailRemetente, String mensagem) {
+    public static void notification(Context context, String nomeRemetente, String emailDestinatario, String emailRemetente, String mensagem) {
 
         if((ConversaActivity.aberta == null && MainActivity.aberta == null)){
 
@@ -32,15 +34,8 @@ public class geraNotificacao {
                             .setContentTitle(nomeRemetente)
                             .setContentText(mensagem);
 
-            Intent resultIntent = new Intent(context, ConversaActivity.class);
-
-            resultIntent.putExtra("NomeContato", nomeRemetente);
-            resultIntent.putExtra("EmailContato", emailRemetente);
-            resultIntent.putExtra("TelefoneContato", "");
-            resultIntent.putExtra("StatusCOntato", "");
-            resultIntent.putExtra("ID", Base64ToString.criptografa(emailRemetente));
-
-
+            //prepara a tela que sera chamada ao clicar na notificaçao
+           preparaIntent(context,nomeRemetente,emailRemetente);
             // Because clicking the notification opens a new ("special") aberta, there's
             // no need to create an artificial back stack.
             PendingIntent resultPendingIntent =
@@ -48,10 +43,11 @@ public class geraNotificacao {
                             context,
                             0,
                             resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
+                            PendingIntent.FLAG_ONE_SHOT
                     );
             mBuilder.setContentIntent(resultPendingIntent);
-
+            //fecha notification ao clicar
+            mBuilder.setAutoCancel(true);
             mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
             int mNotificationId = 001;
@@ -64,10 +60,30 @@ public class geraNotificacao {
         }
     }
 
+    private static void preparaIntent(Context context,String nomeRemetente,String emailRemetente){
+        if(resultIntent == null && ConversaActivity.aberta == null) {
+            resultIntent = new Intent(context, ConversaActivity.class);
+        }
+
+        resultIntent.putExtra("NomeContato", nomeRemetente);
+        resultIntent.putExtra("EmailContato", emailRemetente);
+        resultIntent.putExtra("TelefoneContato", "");
+        resultIntent.putExtra("StatusCOntato", "");
+        resultIntent.putExtra("ID", Base64ToString.criptografa(emailRemetente));
+    }
+
+    /*
     public static void apagaNotificacao(Context context){
          Preferencias preferencias = new Preferencias(context);
         ConfiguracaoFirebase.getDatabaseReference().child("notificacao").
                 child(preferencias.getIdUsuario()).removeValue();
+    }
+    */
+
+    public static void dimiss(){
+        if(mNotifyMgr != null) {
+            mNotifyMgr.cancelAll();
+        }
     }
 
     public static void apagaNotificacaoEspecifica(Context context, String id){
@@ -76,6 +92,5 @@ public class geraNotificacao {
                 child(preferencias.getIdUsuario()).child(id).removeValue();
 
     }
-
 
 }

@@ -6,9 +6,17 @@ package com.whatsapp_cursoandroid.activity.Model;
 
 public class Mensagem {
 
-    private String mensagem, idUsuario;
+    private String mensagem, idUsuario, estado;
 
     public Mensagem() {
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getMensagem() {

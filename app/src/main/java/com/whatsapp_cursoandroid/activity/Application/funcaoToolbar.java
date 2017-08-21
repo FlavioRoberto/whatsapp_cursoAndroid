@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.whatsapp_cursoandroid.R;
 import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
@@ -40,7 +38,7 @@ public class funcaoToolbar {
         switch (id_itemMenu){
             case R.id.menu_sair : logout(activity);break;
             case R.id.menu_buscar: buscar();break;
-            case R.id.menu_configuracoes: configuracoes();break;
+            case R.id.menu_configuracoes: configuracoes(activity);break;
             case R.id.menu_contatos : cadstroContatos(activity);break;
         }
 
@@ -139,7 +137,8 @@ public class funcaoToolbar {
 
     }
 
-    private static void configuracoes() {
+    private static void configuracoes(Activity context) {
+
     }
 
     public static void  logout(Activity activity){

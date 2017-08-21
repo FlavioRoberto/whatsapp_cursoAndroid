@@ -4,7 +4,9 @@
     <dimen name="H1">20sp</dimen>
     <dimen name="H2">16sp</dimen>
     <dimen name="logo_cadastrar">80dp</dimen>
-    <dimen name="marginBottonMensagem">1dp</dimen>
+    <dimen name="marginBottonMensagem">3dp</dimen>
     <dimen name= "marginTopMensagem">2dp</dimen>
     <dimen name="radiusMensagem">6dp</dimen>
+    <dimen name="marginConversa">16dp</dimen>
+    <dimen name="iconeImagem">14dp</dimen>
 </resources>

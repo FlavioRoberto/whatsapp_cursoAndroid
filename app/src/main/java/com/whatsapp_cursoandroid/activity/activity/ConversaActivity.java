@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings("WrongConstant")
 public class ConversaActivity extends AppCompatActivity{
+    private static final String COLOR_DIALOG ="color" ;
     private Contato contato;
     private Toolbar toolbar;
     private ImageView btnMensagem;
@@ -46,6 +47,7 @@ public class ConversaActivity extends AppCompatActivity{
     private Usuario usuarioLogado;
     private Conversa conversa;
     public static ConversaActivity aberta;
+    private String idPushMensagem;
 
 
     @Override
@@ -134,8 +136,11 @@ public class ConversaActivity extends AppCompatActivity{
                 mensagens.clear();
                 //Recuperando Mensagens
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String descriptografaMensagem = "";
                     Mensagem mensagem = snapshot.getValue(Mensagem.class);
                     if(mensagem != null)
+                        descriptografaMensagem = Base64ToString.descriptografa(mensagem.getMensagem());
+                        mensagem.setMensagem(descriptografaMensagem);
                         mensagens.add(mensagem);
 
                 }
@@ -165,7 +170,7 @@ public class ConversaActivity extends AppCompatActivity{
         if(!IdRemetente.isEmpty()) {
             Mensagem mensagem = new Mensagem();
             mensagem.setIdUsuario(IdRemetente);
-            mensagem.setMensagem(textoMensagem.getText().toString());
+            mensagem.setMensagem(Base64ToString.criptografa(textoMensagem.getText().toString()));
 
             preparaMensagem(mensagem);
             preparaConversa(mensagem);
@@ -180,10 +185,15 @@ public class ConversaActivity extends AppCompatActivity{
         if (!envioRemetente) {
             Toast.makeText(getApplicationContext(), "Erro ao salvar mensagem, tente novamente", Toast.LENGTH_SHORT).show();
         } else {
+            mensagem.setEstado("Enviado");
+            atualizaEstadoMensagem(IdRemetente,contato.getId(),mensagem);
             //salva mensagem destinatario
             boolean envioDestinatario = salvarMensagem(contato.getId(), IdRemetente, mensagem);
             if (!envioDestinatario) {
                 Toast.makeText(getApplicationContext(), "Erro ao enviar mensagem, tente novamente", Toast.LENGTH_SHORT).show();
+            }else {
+                mensagem.setEstado("Recebido");
+                atualizaEstadoMensagem(contato.getId(),IdRemetente,mensagem);
             }
         }
     }
@@ -226,7 +236,6 @@ public class ConversaActivity extends AppCompatActivity{
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                    nomeRemetente = (dataSnapshot.getValue(Usuario.class).getNome());
-                    Toast.makeText(ConversaActivity.this,"Nome:"+dataSnapshot.getValue(Usuario.class).getNome(),Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -237,17 +246,31 @@ public class ConversaActivity extends AppCompatActivity{
         }
     }
 
-    private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem){
+    private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem) {
+        try {
+            idPushMensagem = databaseReference.push().getKey();
+            databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
+                    .child(idRemetente).child(idDestinatario);
+            databaseReference.child(idPushMensagem).setValue(Mensagem);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean atualizaEstadoMensagem(String idRemetente, String idDestinatario, Mensagem Mensagem){
         try{
             databaseReference = ConfiguracaoFirebase.getDatabaseReference().child("mensagens")
                     .child(idRemetente).child(idDestinatario);
-            databaseReference.push().setValue(Mensagem);
+            databaseReference.child(idPushMensagem).setValue(Mensagem);
             return true;
         }catch (Exception e){
             e.printStackTrace();
             return false;
         }
     }
+
 
     private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
 
@@ -272,6 +295,7 @@ public class ConversaActivity extends AppCompatActivity{
             try {
                 ConfiguracaoFirebase.getDatabaseReference().child("conversas")
                             .child(preferencias.getIdUsuario()).child(contato.getId()).child("novasMensagens").setValue(false);
+                geraNotificacao.dimiss();
             } catch (Exception e) {
                 e.printStackTrace();
             }

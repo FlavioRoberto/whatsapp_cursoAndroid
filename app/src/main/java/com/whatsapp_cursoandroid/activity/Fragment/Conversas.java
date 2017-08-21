@@ -104,6 +104,8 @@ public class Conversas extends Fragment {
                 for (DataSnapshot conversaSanapshot : dataSnapshot.getChildren()){
                     if(conversaSanapshot != null) {
                         Conversa conversa = conversaSanapshot.getValue(Conversa.class);
+                        String descriptografaConversa = Base64ToString.descriptografa(conversa.getMensagem());
+                        conversa.setMensagem(descriptografaConversa);
                         listMensagem.add(conversa);
                     }
                 }
@@ -117,8 +119,6 @@ public class Conversas extends Fragment {
         });
 
     }
-
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

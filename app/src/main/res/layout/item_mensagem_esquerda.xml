@@ -4,17 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <EditText
-        android:id="@+id/tv_mensagem"
-        android:padding="4dp"
-        android:layout_marginLeft="8dp"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_mensagem_esquerda"
-        android:text="Mensagem..."
+        android:orientation="horizontal"
+        android:gravity="left"
+        android:padding="4dp"
+        android:layout_marginRight="@dimen/marginConversa"
+        android:layout_marginLeft="@dimen/marginConversa"
         android:layout_marginTop="@dimen/marginTopMensagem"
         android:layout_marginBottom="@dimen/marginBottonMensagem"
+        android:background="@drawable/background_mensagem_esquerda">
+
+
+    <ImageView android:id="@+id/imageVisualizado"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        />
+    <ImageView android:id="@+id/imageRecebido"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+
+        />
+
+    <TextView
+        android:id="@+id/tv_mensagem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mensagem..."
+        android:textSize="@dimen/tamanhoTextoMensagem"
+        android:maxWidth="@dimen/widthMaxMensagem"
+        android:textIsSelectable="true"
         android:textColor="@android:color/black"/>
+
+
+</LinearLayout>
 
 </RelativeLayout>

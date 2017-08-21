@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.whatsapp_cursoandroid.activity.Helper.Base64ToString;
 import com.whatsapp_cursoandroid.activity.Helper.Preferencias;
 import com.whatsapp_cursoandroid.activity.Helper.geraNotificacao;
 import com.whatsapp_cursoandroid.activity.Model.pushNotification;
@@ -39,6 +40,10 @@ public class TestService extends Service
                 for (DataSnapshot notificationSnapshot : dataSnapshot.getChildren()) {
                     pushNotification notification = notificationSnapshot.getValue(pushNotification.class);
                     if (notification != null) {
+                        String descriptografaMensagem;
+                        descriptografaMensagem = Base64ToString.descriptografa(notification.getMensagem());
+                        notification.setMensagem(descriptografaMensagem);
+
                         geraNotificacao.notification(getApplicationContext(),
                                 notification.getNomeContato(),
                                 notification.getEmailContato(),
